@@ -1,13 +1,18 @@
 #include <pebble.h>
 
 static Window * s_main_window;
-static TextLayer * s_time_layer;
+
+static BitmapLayer *s_bitmap_layer_body;
+static BitmapLayer *s_bitmap_layer_h_arm;
+static BitmapLayer *s_bitmap_layer_m_arm;
+static GBitmap * s_dancer_body;
+static GBitmap * s_minute_arm;
+static GBitmap * s_hour_arm;
+
 
 // Note: We forward declare all our functions here.
 // This way we can organize our functions in the code
 // according to levels of abstraction.
-
-static void customize_time_text();
 static void update_time();
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed);
 static void main_window_load(Window * window);
@@ -26,6 +31,7 @@ int main(void) {
 static void init() {
   // Create main Window element and assign to pointer
   s_main_window = window_create();
+  window_set_background_color(s_main_window, COLOR_FALLBACK(GColorBlue, GColorBlack));
 
   // Set handlers to manage the elements inside the Window
   window_set_window_handlers(s_main_window, (WindowHandlers) {
@@ -53,31 +59,36 @@ static void main_window_load(Window * window) {
   Layer * window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  // Create the TextLayer
-  s_time_layer = text_layer_create(
-                    GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
+  // Create the dancer
+  s_bitmap_layer_m_arm = bitmap_layer_create(GRect(55,20,120,120));
+  s_minute_arm = gbitmap_create_with_resource(RESOURCE_ID_MINUTE_ARM);
+  bitmap_layer_set_bitmap(s_bitmap_layer_m_arm, s_minute_arm);
+  bitmap_layer_set_compositing_mode(s_bitmap_layer_m_arm, GCompOpSet);
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_m_arm));
 
-  // Apply styles to TextLayer.
-  customize_time_text();
+  s_bitmap_layer_body = bitmap_layer_create(bounds);
+  s_dancer_body = gbitmap_create_with_resource(RESOURCE_ID_DANCER_BODY);
+  bitmap_layer_set_bitmap(s_bitmap_layer_body, s_dancer_body);
+  bitmap_layer_set_compositing_mode(s_bitmap_layer_body, GCompOpSet);
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_body));
 
-  // Add it as a child layer to the Window's root layer
-  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+
+  s_bitmap_layer_h_arm = bitmap_layer_create(GRect(57,60,120,120));
+  s_hour_arm = gbitmap_create_with_resource(RESOURCE_ID_HOUR_ARM);
+  bitmap_layer_set_bitmap(s_bitmap_layer_h_arm, s_hour_arm);
+  bitmap_layer_set_compositing_mode(s_bitmap_layer_h_arm, GCompOpSet);
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_h_arm));
 
 }
 
 static void main_window_unload(Window * window) {
-  // Destroy TextLayer
-  text_layer_destroy(s_time_layer);
-}
-
-// Improve the layout to be more like a watchface
-static void customize_time_text() {
-
-  text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_text_color(s_time_layer, GColorBlack);
-  text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-
+  // Destroy images
+  bitmap_layer_destroy(s_bitmap_layer_m_arm);
+  gbitmap_destroy(s_dancer_body);
+  bitmap_layer_destroy(s_bitmap_layer_body);
+  gbitmap_destroy(s_minute_arm);
+  bitmap_layer_destroy(s_bitmap_layer_h_arm);
+  gbitmap_destroy(s_hour_arm);
 }
 
 // This function is called each time the time is updated.
@@ -95,7 +106,4 @@ static void update_time() {
   // calls.
   static char s_buffer[12];
   strftime(s_buffer, sizeof(s_buffer), "%r", tick_time);
-
-  // Display this time on the TextLayer
-  text_layer_set_text(s_time_layer, s_buffer);
 }

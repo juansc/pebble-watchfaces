@@ -17,17 +17,17 @@
       {
         "type": "bitmap",
         "name": "DANCER_BODY",
-        "file": "dancer_body_color.png"
+        "file": "dancer_body_color_size_2.png"
       },
       {
         "type": "bitmap",
         "name": "MINUTE_ARM",
-        "file": "minute_arm_color.png"
+        "file": "minute_arm_color_size_2.png"
       },
       {
         "type": "bitmap",
         "name": "HOUR_ARM",
-        "file": "hour_arm_color.png"
+        "file": "hour_arm_color_size_2.png"
       }
     ]
   }
