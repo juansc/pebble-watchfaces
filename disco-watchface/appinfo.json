@@ -13,6 +13,22 @@
     "dummy": 0
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "bitmap",
+        "name": "DANCER_BODY",
+        "file": "dancer_body_color.png"
+      },
+      {
+        "type": "bitmap",
+        "name": "MINUTE_ARM",
+        "file": "minute_arm_color.png"
+      },
+      {
+        "type": "bitmap",
+        "name": "HOUR_ARM",
+        "file": "hour_arm_color.png"
+      }
+    ]
   }
 }
