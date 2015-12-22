@@ -19,6 +19,9 @@ static void main_window_load(Window * window);
 static void main_window_unload(Window * window);
 static void init();
 static void deinit();
+static BitmapLayer * create_new_bitmap_layer(GRect bounds,
+                                            GBitmap * bitmap,
+                                            uint32_t resource_id);
 
 // Entry point for our program
 int main(void) {
@@ -55,30 +58,33 @@ static void deinit() {
 }
 
 static void main_window_load(Window * window) {
-  // Get information about the Window
+  // Get information for window and set up variables
+  // for bitmap layers.
   Layer * window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
+  GRect m_arm_bounds = GRect(55,20,120,120);
+  GRect h_arm_bounds = GRect(57,60,120,120);
 
-  // Create the dancer
-  s_bitmap_layer_m_arm = bitmap_layer_create(GRect(55,20,120,120));
-  s_minute_arm = gbitmap_create_with_resource(RESOURCE_ID_MINUTE_ARM);
-  bitmap_layer_set_bitmap(s_bitmap_layer_m_arm, s_minute_arm);
-  bitmap_layer_set_compositing_mode(s_bitmap_layer_m_arm, GCompOpSet);
+  s_bitmap_layer_m_arm = create_new_bitmap_layer(m_arm_bounds, s_minute_arm, RESOURCE_ID_MINUTE_ARM);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_m_arm));
 
-  s_bitmap_layer_body = bitmap_layer_create(bounds);
-  s_dancer_body = gbitmap_create_with_resource(RESOURCE_ID_DANCER_BODY);
-  bitmap_layer_set_bitmap(s_bitmap_layer_body, s_dancer_body);
-  bitmap_layer_set_compositing_mode(s_bitmap_layer_body, GCompOpSet);
+  s_bitmap_layer_body = create_new_bitmap_layer(bounds, s_dancer_body, RESOURCE_ID_DANCER_BODY);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_body));
 
-
-  s_bitmap_layer_h_arm = bitmap_layer_create(GRect(57,60,120,120));
-  s_hour_arm = gbitmap_create_with_resource(RESOURCE_ID_HOUR_ARM);
-  bitmap_layer_set_bitmap(s_bitmap_layer_h_arm, s_hour_arm);
-  bitmap_layer_set_compositing_mode(s_bitmap_layer_h_arm, GCompOpSet);
+  s_bitmap_layer_h_arm = create_new_bitmap_layer(h_arm_bounds, s_hour_arm, RESOURCE_ID_HOUR_ARM);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_h_arm));
 
+}
+
+
+static BitmapLayer * create_new_bitmap_layer(GRect bounds,
+                                             GBitmap * bitmap,
+                                             uint32_t resource_id) {
+  BitmapLayer * bitmap_layer = bitmap_layer_create(bounds);
+  bitmap = gbitmap_create_with_resource(resource_id);
+  bitmap_layer_set_bitmap(bitmap_layer, bitmap);
+  bitmap_layer_set_compositing_mode(bitmap_layer, GCompOpSet);
+  return bitmap_layer;
 }
 
 static void main_window_unload(Window * window) {
