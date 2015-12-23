@@ -15,12 +15,12 @@ typedef struct TimeInfo{
 static Window * s_main_window;
 
 // Images
-static BitmapLayer *s_bitmap_layer_body;
-static BitmapLayer *s_bitmap_layer_h_arm;
-static BitmapLayer *s_bitmap_layer_m_arm;
-static GBitmap * s_dancer_body;
-static GBitmap * s_minute_arm;
-static GBitmap * s_hour_arm;
+static RotBitmapLayer * hour_arm_layer;
+static RotBitmapLayer * body_layer;
+static RotBitmapLayer * min_arm_layer;
+static GBitmap * dancer_body_bitmap;
+static GBitmap * minute_arm_bitmap;
+static GBitmap * hour_arm_bitmap;
 
 // Information about current time.
 static TimeInfo current_time;
@@ -34,9 +34,9 @@ static void main_window_load(Window * window);
 static void main_window_unload(Window * window);
 static void init();
 static void deinit();
-static BitmapLayer * create_new_bitmap_layer(GRect bounds,
-                                            GBitmap * bitmap,
-                                            uint32_t resource_id);
+static RotBitmapLayer * create_new_rot_bitmap_layer(GRect bounds,
+                                                    GBitmap * bitmap,
+                                                    uint32_t resource_id);
 
 // Entry point for our program
 int main(void) {
@@ -76,46 +76,47 @@ static void main_window_load(Window * window) {
   // Get information for window and set up variables
   // for bitmap layers.
   Layer * window_layer = window_get_root_layer(window);
-  GRect bounds = layer_get_bounds(window_layer);
-  GRect m_arm_bounds = GRect(55,20,120,120);
-  GRect h_arm_bounds = GRect(40,27,120,120);
+  GRect body_bounds = GRect(45,45,500,500);
+  GRect m_arm_bounds = GRect(90,57,120,120);
+  GRect h_arm_bounds = GRect(72,59,120,120);
 
 
   // We have three different layers: minute arm, the body, and the hour arm.
-  // Each must be in its own bitmap layer, so we must create three different
-  // bitmap layers.
-  s_bitmap_layer_m_arm = create_new_bitmap_layer(m_arm_bounds, s_minute_arm, RESOURCE_ID_MINUTE_ARM);
-  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_m_arm));
+  // Each must be in its own rotatable bitmap layer, so we must create three different
+  // rot_bitmap layers.
+  min_arm_layer = create_new_rot_bitmap_layer(m_arm_bounds, minute_arm_bitmap, RESOURCE_ID_MINUTE_ARM);
+  layer_add_child(window_layer, (Layer *)min_arm_layer);
 
-  s_bitmap_layer_body = create_new_bitmap_layer(bounds, s_dancer_body, RESOURCE_ID_DANCER_BODY);
-  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_body));
 
-  s_bitmap_layer_h_arm = create_new_bitmap_layer(h_arm_bounds, s_hour_arm, RESOURCE_ID_HOUR_ARM);
-  layer_add_child(window_layer, bitmap_layer_get_layer(s_bitmap_layer_h_arm));
+  body_layer = create_new_rot_bitmap_layer(body_bounds, dancer_body_bitmap, RESOURCE_ID_DANCER_BODY);
+  layer_add_child(window_layer, (Layer *)body_layer);
+
+  hour_arm_layer = create_new_rot_bitmap_layer(h_arm_bounds, hour_arm_bitmap, RESOURCE_ID_HOUR_ARM);
+  layer_add_child(window_layer, (Layer *)hour_arm_layer);
 
 }
 
-// This adds a new bitmap layer. Since we do this three times for
+// This adds a new rot_bitmap layer. Since we do this three times for
 // this app, this function prevents repetitive code.
-static BitmapLayer * create_new_bitmap_layer(GRect bounds,
-                                             GBitmap * bitmap,
-                                             uint32_t resource_id) {
-  BitmapLayer * bitmap_layer = bitmap_layer_create(bounds);
+static RotBitmapLayer * create_new_rot_bitmap_layer(GRect bounds,
+                                                    GBitmap * bitmap,
+                                                    uint32_t resource_id) {
   bitmap = gbitmap_create_with_resource(resource_id);
-  bitmap_layer_set_bitmap(bitmap_layer, bitmap);
-  bitmap_layer_set_compositing_mode(bitmap_layer, GCompOpSet);
+  RotBitmapLayer * bitmap_layer = rot_bitmap_layer_create(bitmap);
+  rot_bitmap_set_compositing_mode(bitmap_layer, GCompOpSet);
+  layer_set_frame((Layer *)bitmap_layer, bounds);
   return bitmap_layer;
 }
 
 // Destroy the bitmap layers once the app closes.
 static void main_window_unload(Window * window) {
   // Destroy images
-  bitmap_layer_destroy(s_bitmap_layer_m_arm);
-  gbitmap_destroy(s_dancer_body);
-  bitmap_layer_destroy(s_bitmap_layer_body);
-  gbitmap_destroy(s_minute_arm);
-  bitmap_layer_destroy(s_bitmap_layer_h_arm);
-  gbitmap_destroy(s_hour_arm);
+  rot_bitmap_layer_destroy(min_arm_layer);
+  gbitmap_destroy(minute_arm_bitmap);
+  rot_bitmap_layer_destroy(body_layer);
+  gbitmap_destroy(dancer_body_bitmap);
+  rot_bitmap_layer_destroy(hour_arm_layer);
+  gbitmap_destroy(hour_arm_bitmap);
 }
 
 // This function is called each time the time is updated.
