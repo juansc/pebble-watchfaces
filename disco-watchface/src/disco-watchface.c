@@ -124,7 +124,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 // This function should only be called once when the app is started.
-static void initialize_time() {
+/*static void initialize_time() {
   time_t temp = time(NULL);
   struct tm * tick_time = localtime(&temp);
 
@@ -134,7 +134,7 @@ static void initialize_time() {
   current_time.min_angle = tick_time->tm_hour * 360 / 60;
   current_time.hour_angle = tick_time->tm_hour * 360 / 24;
 
-}
+}*/
 
 static void update_time() {
   // We get the time structure from the update.
