@@ -1,7 +1,11 @@
 #include <pebble.h>
 
-#define DEGREES_IN_A_MINUTE 6 // 360 / 60
-#define DEGREES_IN_AN_HOUR 30 // 360 / 24
+#define DEGREES_IN_A_CIRCLE 360
+#define HOURS_IN_A_CIRCLE 12
+#define MINUTES_IN_AN_HOUR 60
+#define DEGREES_IN_A_MINUTE (DEGREES_IN_A_CIRCLE / MINUTES_IN_AN_HOUR)
+#define DEGREES_IN_AN_HOUR (DEGREES_IN_A_CIRCLE / HOURS_IN_A_CIRCLE)
+#define ANGLE_OFFSET 90
 
 typedef struct TimeInfo{
   int hours;
@@ -76,10 +80,13 @@ static void main_window_load(Window * window) {
   // Get information for window and set up variables
   // for bitmap layers.
   Layer * window_layer = window_get_root_layer(window);
-  GRect body_bounds = GRect(45,45,500,500);
-  GRect m_arm_bounds = GRect(50,40,120,120);
-  GRect h_arm_bounds = GRect(40,39,120,120);
+  GRect bounds = layer_get_bounds(window_layer);
+  int16_t x = bounds.size.w / 4;
+  int16_t y = bounds.size.h / 4;
 
+  GRect body_bounds = GRect(x,y,bounds.size.w,bounds.size.h);
+  GRect m_arm_bounds = GRect(x+5,y-5,120,120);
+  GRect h_arm_bounds = GRect(x-5,y-5,120,120);
 
   // We have three different layers: minute arm, the body, and the hour arm.
   // Each must be in its own rotatable bitmap layer, so we must create three different
@@ -87,7 +94,6 @@ static void main_window_load(Window * window) {
   min_arm_layer = create_new_rot_bitmap_layer(m_arm_bounds, minute_arm_bitmap, RESOURCE_ID_MINUTE_ARM);
   rot_bitmap_set_src_ic(min_arm_layer, GPoint(5, 5));
   layer_add_child(window_layer, (Layer *)min_arm_layer);
-
 
   body_layer = create_new_rot_bitmap_layer(body_bounds, dancer_body_bitmap, RESOURCE_ID_DANCER_BODY);
   layer_add_child(window_layer, (Layer *)body_layer);
@@ -144,13 +150,16 @@ static void update_time() {
   time_t temp = time(NULL);
   struct tm * tick_time = localtime(&temp);
 
-  current_time.hours = tick_time->tm_hour;
-  current_time.minutes = tick_time->tm_min;
-  current_time.is_am = tick_time->tm_hour < 12;
-  current_time.min_angle = (current_time.min_angle + DEGREES_IN_A_MINUTE) % 360;
-  current_time.hour_angle = (current_time.hour_angle + DEGREES_IN_AN_HOUR) % 360;
+// These aren't being used right now
+  // current_time.hours = tick_time->tm_hour;
+  // current_time.minutes = tick_time->tm_min;
+  // current_time.is_am = tick_time->tm_hour < HOURS_IN_A_CIRCLE;
+  // current_time.min_angle = (current_time.min_angle + DEGREES_IN_A_MINUTE) % DEGREES_IN_A_CIRCLE;
+  // current_time.hour_angle = (current_time.hour_angle + DEGREES_IN_AN_HOUR) % DEGREES_IN_A_CIRCLE;
 
-  rot_bitmap_layer_set_angle(min_arm_layer, DEG_TO_TRIGANGLE(tick_time->tm_min * 360 / 60 - 90));
-  rot_bitmap_layer_set_angle(hour_arm_layer, DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * 360 / 12 - 90));
+  rot_bitmap_layer_set_angle(min_arm_layer,
+    DEG_TO_TRIGANGLE(tick_time->tm_min * DEGREES_IN_A_CIRCLE / MINUTES_IN_AN_HOUR - ANGLE_OFFSET));
+  rot_bitmap_layer_set_angle(hour_arm_layer,
+    DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * DEGREES_IN_A_CIRCLE / HOURS_IN_A_CIRCLE - ANGLE_OFFSET));
 
 }
