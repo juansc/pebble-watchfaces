@@ -151,6 +151,6 @@ static void update_time() {
   current_time.hour_angle = (current_time.hour_angle + DEGREES_IN_AN_HOUR) % 360;
 
   rot_bitmap_layer_set_angle(min_arm_layer, DEG_TO_TRIGANGLE(tick_time->tm_min * 360 / 60 - 90));
-  rot_bitmap_layer_set_angle(hour_arm_layer, DEG_TO_TRIGANGLE(tick_time->tm_hour * 360 / 12 - 90));
+  rot_bitmap_layer_set_angle(hour_arm_layer, DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * 360 / 12 - 90));
 
 }
