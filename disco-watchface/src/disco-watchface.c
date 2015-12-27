@@ -2,8 +2,8 @@
 
 #define DEGREES_IN_A_CIRCLE 360
 #define HOURS_IN_A_CIRCLE 12
-#define MINUTES_IN_AN_HOUR 60
-#define DEGREES_IN_A_MINUTE (DEGREES_IN_A_CIRCLE / MINUTES_IN_AN_HOUR)
+#define MINUTES_IN_A_CIRCLE 60
+#define DEGREES_IN_A_MINUTE (DEGREES_IN_A_CIRCLE / MINUTES_IN_A_CIRCLE)
 #define DEGREES_IN_AN_HOUR (DEGREES_IN_A_CIRCLE / HOURS_IN_A_CIRCLE)
 #define ANGLE_OFFSET 90
 
@@ -158,8 +158,8 @@ static void update_time() {
   // current_time.hour_angle = (current_time.hour_angle + DEGREES_IN_AN_HOUR) % DEGREES_IN_A_CIRCLE;
 
   rot_bitmap_layer_set_angle(min_arm_layer,
-    DEG_TO_TRIGANGLE(tick_time->tm_min * DEGREES_IN_A_CIRCLE / MINUTES_IN_AN_HOUR - ANGLE_OFFSET));
+    DEG_TO_TRIGANGLE(tick_time->tm_min * DEGREES_IN_A_MINUTE - ANGLE_OFFSET));
   rot_bitmap_layer_set_angle(hour_arm_layer,
-    DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * DEGREES_IN_A_CIRCLE / HOURS_IN_A_CIRCLE - ANGLE_OFFSET));
+    DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * DEGREES_IN_AN_HOUR - ANGLE_OFFSET));
 
 }
