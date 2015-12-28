@@ -161,6 +161,6 @@ static void update_time() {
     DEG_TO_TRIGANGLE(tick_time->tm_min * DEGREES_IN_A_MINUTE - ANGLE_OFFSET));
   rot_bitmap_layer_set_angle(hour_arm_layer,
     DEG_TO_TRIGANGLE((tick_time->tm_hour - 1) * DEGREES_IN_AN_HOUR - ANGLE_OFFSET) +
-    DEG_TO_TRIGANGLE(tick_time->tm_min % DEGREES_IN_A_CIRCLE));
+    DEG_TO_TRIGANGLE(tick_time->tm_min % DEGREES_IN_A_CIRCLE / 2));
 
 }
