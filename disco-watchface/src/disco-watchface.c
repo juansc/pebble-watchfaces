@@ -17,7 +17,6 @@ typedef struct TimeInfo{
 
 // Our static variables
 static Window * s_main_window;
-static TextLayer *s_uptime_layer;
 
 // Images
 static RotBitmapLayer * hour_arm_layer;
