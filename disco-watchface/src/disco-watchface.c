@@ -140,6 +140,8 @@ static BitmapLayer * create_new_bitmap_layer(GRect bounds,
 // Destroy the bitmap layers once the app closes.
 static void main_window_unload(Window * window) {
   // Destroy images
+  bitmap_layer_destroy(number_layer);
+  gbitmap_destroy(numbers_bitmap);
   rot_bitmap_layer_destroy(min_arm_layer);
   gbitmap_destroy(minute_arm_bitmap);
   rot_bitmap_layer_destroy(body_layer);
