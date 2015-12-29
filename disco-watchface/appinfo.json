@@ -22,12 +22,22 @@
       {
         "type": "bitmap",
         "name": "MINUTE_ARM",
-        "file": "minute_arm_color_size_2.png"
+        "file": "temp_min_arm_size_2.png"
       },
       {
         "type": "bitmap",
         "name": "HOUR_ARM",
-        "file": "hour_arm_color_size_2.png"
+        "file": "temp_hour_arm_size_2.png"
+      },
+      {
+        "type": "bitmap",
+        "name": "ROUND_NUMBERS",
+        "file": "numbers_circle_face.png"
+      },
+      {
+        "type": "bitmap",
+        "name": "SQUARE_NUMBERS",
+        "file": "numbers_square_face.png"
       }
     ]
   }
