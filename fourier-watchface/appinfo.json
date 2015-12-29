@@ -1,0 +1,18 @@
+{
+  "uuid": "81155d0a-e296-4a07-bd66-72d5401af13a",
+  "shortName": "fourier-watchface",
+  "longName": "fourier-watchface",
+  "companyName": "MakeAwesomeHappen",
+  "versionLabel": "1.0",
+  "sdkVersion": "3",
+  "targetPlatforms": ["aplite", "basalt", "chalk"],
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
