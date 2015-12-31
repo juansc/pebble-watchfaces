@@ -22,12 +22,20 @@ static int sec_angle;
 
 // Colors
 static const int num_of_colors = 12;
-static const int sec_shrink = 20;
-static const int min_shrink = 40;
-static const int hr_shrink = 65;
-static const int sec_ring_width = 15;
-static const int min_ring_width = 20;
-static const int hr_ring_width = 15;
+// All our round options
+static const int round_sec_shrink = 70;
+static const int round_min_shrink = 40;
+static const int round_hr_shrink = 10;
+static const int round_sec_ring_width = 25;
+static const int round_min_ring_width = 25;
+static const int round_hr_ring_width = 22;
+// All our square options
+static const int square_sec_shrink = 50;
+static const int square_min_shrink = 30;
+static const int square_hr_shrink = 10;
+static const int square_sec_ring_width = 25;
+static const int square_min_ring_width = 17;
+static const int square_hr_ring_width = 17;
 
 // Note: We forward declare all our functions here.
 // This way we can organize our functions in the code
@@ -112,17 +120,25 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 static void render_sec_layer(Layer *layer, GContext *ctx) {
   GRect my_bounds = layer_get_bounds(layer);
-  draw_rainbow_wheel(ctx, my_bounds, sec_shrink, sec_ring_width, sec_angle);
+  int shrink = PBL_IF_ROUND_ELSE(round_sec_shrink, square_sec_shrink);
+  int width = PBL_IF_ROUND_ELSE(round_sec_ring_width, square_sec_ring_width);
+  draw_rainbow_wheel(ctx, my_bounds, shrink, width, sec_angle);
 }
 
 static void render_min_layer(Layer *layer, GContext *ctx) {
   GRect my_bounds = layer_get_bounds(layer);
-  draw_rainbow_wheel(ctx, my_bounds, min_shrink, min_ring_width, min_angle);
+  int shrink = PBL_IF_ROUND_ELSE(round_min_shrink, square_min_shrink);
+  int width = PBL_IF_ROUND_ELSE(round_min_ring_width, square_min_ring_width);
+  draw_rainbow_wheel(ctx, my_bounds, shrink, width, min_angle);
+
 }
 
 static void render_hr_layer(Layer *layer, GContext *ctx) {
   GRect my_bounds = layer_get_bounds(layer);
-  draw_rainbow_wheel(ctx, my_bounds, hr_shrink, hr_ring_width, hr_angle);
+  int shrink = PBL_IF_ROUND_ELSE(round_hr_shrink, square_hr_shrink);
+  int width = PBL_IF_ROUND_ELSE(round_hr_ring_width, square_hr_ring_width);
+  draw_rainbow_wheel(ctx, my_bounds, shrink, width, hr_angle);
+
 }
 
 static void draw_rainbow_wheel(GContext *ctx, GRect bounds,
