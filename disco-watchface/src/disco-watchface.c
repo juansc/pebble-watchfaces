@@ -22,9 +22,11 @@ static Window * s_main_window;
 static RotBitmapLayer * hour_arm_layer;
 static RotBitmapLayer * body_layer;
 static RotBitmapLayer * min_arm_layer;
+static BitmapLayer * number_layer;
 static GBitmap * dancer_body_bitmap;
 static GBitmap * minute_arm_bitmap;
 static GBitmap * hour_arm_bitmap;
+static GBitmap * numbers_bitmap;
 
 // Information about current time.
 static TimeInfo current_time;
@@ -41,6 +43,9 @@ static void deinit();
 static RotBitmapLayer * create_new_rot_bitmap_layer(GRect bounds,
                                                     GBitmap * bitmap,
                                                     uint32_t resource_id);
+static BitmapLayer * create_new_bitmap_layer(GRect bounds,
+                                                GBitmap * bitmap,
+                                                uint32_t resource_id);
 
 // Entry point for our program
 int main(void) {
@@ -102,6 +107,11 @@ static void main_window_load(Window * window) {
   rot_bitmap_set_src_ic(hour_arm_layer, GPoint(10, 10));
   layer_add_child(window_layer, (Layer *)hour_arm_layer);
 
+  number_layer = create_new_bitmap_layer(bounds, numbers_bitmap,
+                                        PBL_IF_ROUND_ELSE(RESOURCE_ID_ROUND_NUMBERS,
+                                                          RESOURCE_ID_SQUARE_NUMBERS));
+  layer_add_child(window_layer, (Layer * )number_layer);
+
 }
 
 // This adds a new rot_bitmap layer. Since we do this three times for
@@ -116,9 +126,22 @@ static RotBitmapLayer * create_new_rot_bitmap_layer(GRect bounds,
   return bitmap_layer;
 }
 
+// This adds a new bitmap layer.
+static BitmapLayer * create_new_bitmap_layer(GRect bounds,
+                                                GBitmap * bitmap,
+                                                uint32_t resource_id) {
+  bitmap = gbitmap_create_with_resource(resource_id);
+  BitmapLayer * bitmap_layer = bitmap_layer_create(bounds);
+  bitmap_layer_set_bitmap(bitmap_layer, bitmap);
+  bitmap_layer_set_compositing_mode(bitmap_layer, GCompOpSet);
+  return bitmap_layer;
+}
+
 // Destroy the bitmap layers once the app closes.
 static void main_window_unload(Window * window) {
   // Destroy images
+  bitmap_layer_destroy(number_layer);
+  gbitmap_destroy(numbers_bitmap);
   rot_bitmap_layer_destroy(min_arm_layer);
   gbitmap_destroy(minute_arm_bitmap);
   rot_bitmap_layer_destroy(body_layer);
